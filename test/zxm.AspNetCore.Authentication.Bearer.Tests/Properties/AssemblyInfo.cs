@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("zxm.AspNetCore.Security")]
+[assembly: AssemblyProduct("zxm.AspNetCore.Authentication.Bearer.Tests")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -16,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1ebbf127-0a5c-4a60-820a-a3684693043b")]
+[assembly: Guid("46d58adb-be52-4762-a717-5eb0afd5a937")]

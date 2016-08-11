@@ -7,8 +7,8 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>b00cc743-6820-4c21-b02b-f6078334ce12</ProjectGuid>
-    <RootNamespace>zxm.AspNetCore.Security.Tests</RootNamespace>
+    <ProjectGuid>7cf2a7cf-d353-4750-aa41-b3d9697b84c5</ProjectGuid>
+    <RootNamespace>zxm.AspNetCore.Authentication.Bearer</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
