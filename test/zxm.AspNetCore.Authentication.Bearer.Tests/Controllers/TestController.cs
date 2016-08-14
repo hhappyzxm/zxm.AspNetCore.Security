@@ -5,15 +5,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace zxm.AspNetCore.Authentication.Bearer.Tests.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class TestController : Controller
     {
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<string> Get()
+        [HttpPost]
+        [Authorize]
+        public async Task<string> Test1()
         {
-            return await Task.FromResult("Get is ok");
+            return await Task.FromResult("Test1 is ok");
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "LoggedUser")]
+        public async Task<string> Test2()
+        {
+            return await Task.FromResult("Test2 is ok");
         }
     }
 }

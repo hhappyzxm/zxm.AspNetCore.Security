@@ -10,6 +10,9 @@
     "Microsoft.AspNetCore.Hosting": "1.0.0",
     "Microsoft.AspNetCore.TestHost": "1.0.0",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "zxm.AspNetCore.Authentication.Hmac": {"target": "project"},
+    "zxm.AspNetCore.Authentication.Hmac.Signature": { "target": "project" },
+    "zxm.AspNetCore.Authorization.Hmac": "1.0.0-*",
   },
 
   "frameworks": {

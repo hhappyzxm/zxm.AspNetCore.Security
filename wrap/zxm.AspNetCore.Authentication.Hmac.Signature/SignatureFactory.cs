@@ -29,6 +29,11 @@ namespace zxm.AspNetCore.Authentication.Hmac.Signature
                 throw new ArgumentNullException(nameof(options.ClientSecret));
             }
 
+            if (options.Encoding == null)
+            {
+                throw new ArgumentNullException(nameof(options.Encoding));
+            }
+
             var sortedDictionary = GetSortedDictionary(options);
 
             var encryptionStr = GetEncryptionString(sortedDictionary);
@@ -44,7 +49,7 @@ namespace zxm.AspNetCore.Authentication.Hmac.Signature
                 {SignatureKeys.ClientSecret.ToLower(), options.ClientSecret},
                 {SignatureKeys.Timestamp.ToLower(), options.Timestamp.ToString()}
             };
-            if (!string.IsNullOrEmpty(options.AccessToken)) dic.Add(SignatureKeys.AccessToken, options.AccessToken);
+            if (!string.IsNullOrEmpty(options.LoggedUserToken)) dic.Add(SignatureKeys.LoggedUserToken, options.LoggedUserToken);
             if (!string.IsNullOrEmpty(options.PostData)) dic.Add(SignatureKeys.PostData, options.PostData);
 
             return dic;
@@ -65,7 +70,7 @@ namespace zxm.AspNetCore.Authentication.Hmac.Signature
             return sb.ToString();
         }
 
-        public static string GetMd5_32(this string encryptionStr, Encoding encoding)
+        private static string GetMd5_32(this string encryptionStr, Encoding encoding)
         {
             byte[] data = GetMd5(encryptionStr, encoding);
             var tmp = new StringBuilder();

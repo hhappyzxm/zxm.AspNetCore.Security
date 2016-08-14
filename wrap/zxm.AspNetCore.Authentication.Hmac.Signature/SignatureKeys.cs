@@ -8,7 +8,7 @@
 
         public const string Timestamp = "Timestamp";
 
-        public const string AccessToken = "AccessToken";
+        public const string LoggedUserToken = "LoggedUserToken";
 
         public const string PostData = "PostData";
 

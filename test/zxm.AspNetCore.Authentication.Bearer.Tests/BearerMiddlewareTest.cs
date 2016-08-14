@@ -10,6 +10,9 @@ using Xunit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using zxm.AspNetCore.Authentication.Hmac;
+using zxm.AspNetCore.Authorization.Hmac;
+using zxm.AspNetCore.Authentication.Hmac.Signature;
 
 namespace zxm.AspNetCore.Authentication.Bearer.Tests
 {
@@ -21,34 +24,72 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
             var hostBuilder = new WebHostBuilder();
             hostBuilder.ConfigureServices(collection =>
             {
-                collection.AddAuthentication();
+                collection.AddAuthorization(options =>
+                {
+                    options.AddPolicy("LoggedUser",
+                         policy => policy.Requirements.Add(new LoggedUserRequirement()));
+                });
                 collection.AddMvc();
             });
             hostBuilder.Configure(app =>
             {
-                app.UseBearerAuthentication("123456");
+                var options = new HmacOptions()
+                {
+                    TryGetClientSecret = clientId => clientId == "123456"?"456789":string.Empty,
+                    VerifyLoggedUserToken = token => token == "abc"
+                };
+                app.UseHmacAuthentication(options);
                 app.UseMvc();
-                //app.Run(async context =>
-                //{
-                //    await context.Response.WriteAsync("Hello world");
-                //});
             });
 
             using (var testServer = new TestServer(hostBuilder))
             {
-                var response = await testServer.CreateRequest("/api/test").GetAsync();
-                Assert.Equal(401, (int)response.StatusCode);
+                var signatureOptions = new SignatureOptions
+                {
+                    ClientId = "123456",
+                    ClientSecret = "456789",
+                    Timestamp = 10
+                };
+                var signature = BuildSignature(signatureOptions);
+                var req1 = testServer.CreateRequest("/api/test/test1"+ BuildSignatureQueryString(signatureOptions, signature));
+                var res1 = await req1.PostAsync();
+                Assert.Equal(200, (int)res1.StatusCode);
 
-                var req1 = testServer.CreateRequest("/api/test");
-                req1.AddHeader("Authorization", "Bearer 66666");
-                var res1 = await req1.GetAsync();
-                Assert.Equal(401, (int)res1.StatusCode);
+                var req2 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                var res2 = await req2.PostAsync();
+                Assert.Equal(403, (int)res2.StatusCode);
 
-                var req2 = testServer.CreateRequest("/api/test");
-                req2.AddHeader("Authorization", "Bearer 123456");
-                var res2 = await req2.GetAsync();
-                Assert.Equal(200, (int)res2.StatusCode);
+                signatureOptions.LoggedUserToken = "abc";
+                signature = BuildSignature(signatureOptions);
+                var req3 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                var res3 = await req3.PostAsync();
+                Assert.Equal(200, (int)res3.StatusCode);
+
+                signatureOptions.ClientId = "123123";
+                signature = BuildSignature(signatureOptions);
+                var req4 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                var res4 = await req4.PostAsync();
+                Assert.Equal(401, (int)res4.StatusCode);
             }
+        }
+
+        private string BuildSignature(SignatureOptions options)
+        {
+            return SignatureFactory.GenerateSignature(options);
+        }
+
+        private string BuildSignatureQueryString(SignatureOptions options, string signature)
+        {
+            var queryStr = $"?clientid={options.ClientId}&timestamp={options.Timestamp}";
+
+            if (!string.IsNullOrEmpty(options.LoggedUserToken))
+            {
+                queryStr += $"&loggedusertoken={options.LoggedUserToken}";
+            }
+
+            queryStr += $"&signature={signature}";
+
+            return queryStr;
         }
     }
 }

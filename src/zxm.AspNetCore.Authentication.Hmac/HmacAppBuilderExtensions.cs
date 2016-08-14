@@ -6,7 +6,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
 {
     public static class HmacAppBuilderExtensions
     {
-        public static IApplicationBuilder UseBearerAuthentication(this IApplicationBuilder app, HmacOptions options)
+        public static IApplicationBuilder UseHmacAuthentication(this IApplicationBuilder app, HmacOptions options)
         {
             if (app == null)
             {

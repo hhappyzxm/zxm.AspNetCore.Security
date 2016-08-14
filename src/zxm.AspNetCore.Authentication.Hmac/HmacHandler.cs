@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -38,7 +40,19 @@ namespace zxm.AspNetCore.Authentication.Hmac
                 return AuthenticateResult.Fail("Invalid signature.");
             }
 
-            return null;
+            var identityUser = new GenericIdentity(_signatureOptions.ClientId);
+
+            if (!string.IsNullOrEmpty(_signatureOptions.LoggedUserToken) && Options.VerifyLoggedUserToken != null)
+            {
+                if (Options.VerifyLoggedUserToken(_signatureOptions.LoggedUserToken))
+                {
+                    identityUser.AddClaim(new Claim(ClaimTypes.UserData, _signatureOptions.LoggedUserToken));
+                }
+            }
+
+            var principal = new ClaimsPrincipal(identityUser);
+            var ticket = new AuthenticationTicket(principal, new AuthenticationProperties(), Options.AuthenticationScheme);
+            return AuthenticateResult.Success(ticket);
         }
 
         private bool VerifyHttpMethod()
@@ -62,9 +76,17 @@ namespace zxm.AspNetCore.Authentication.Hmac
             _signatureInRequest = Request.Query[SignatureKeys.Signature];
             if (string.IsNullOrEmpty(_signatureInRequest)) return false;
 
-            //_signatureOptions.Timestamp = Request.Query[SignatureKeys.Timestamp];
+            int tmpTimestamp;
+            if (int.TryParse(Request.Query[SignatureKeys.Timestamp], out tmpTimestamp))
+            {
+                _signatureOptions.Timestamp = tmpTimestamp;
+            }
+            else
+            {
+                return false;
+            }
 
-            _signatureOptions.AccessToken = Request.Query[SignatureKeys.AccessToken];
+            _signatureOptions.LoggedUserToken = Request.Query[SignatureKeys.LoggedUserToken];
 
             if (Request.Body.Length > 0)
             {
@@ -78,6 +100,16 @@ namespace zxm.AspNetCore.Authentication.Hmac
             return true;
         }
 
+        protected override Task<bool> HandleForbiddenAsync(ChallengeContext context)
+        {
+            return base.HandleForbiddenAsync(context);
+        }
+
+        protected override Task<bool> HandleUnauthorizedAsync(ChallengeContext context)
+        {
+            return base.HandleUnauthorizedAsync(context);
+        }
+
         protected override Task HandleSignOutAsync(SignOutContext context)
         {
             throw new NotSupportedException();
@@ -89,3 +121,4 @@ namespace zxm.AspNetCore.Authentication.Hmac
         }
     }
 }
+
