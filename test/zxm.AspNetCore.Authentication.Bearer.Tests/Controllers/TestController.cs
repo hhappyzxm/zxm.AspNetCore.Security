@@ -10,6 +10,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests.Controllers
     public class TestController : Controller
     {
         [HttpGet]
+        [AllowAnonymous]
         public async Task<string> Get()
         {
             return await Task.FromResult("Get is ok");
