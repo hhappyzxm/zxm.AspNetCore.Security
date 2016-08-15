@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9383E626-EAD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5DAE0E4A-8070-4375-93A1-CFF100F5AE08}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Authentication.Bearer", "src\zxm.AspNetCore.Authentication.Bearer\zxm.AspNetCore.Authentication.Bearer.xproj", "{7CF2A7CF-D353-4750-AA41-B3D9697B84C5}"
-EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Authentication.Bearer.Tests", "test\zxm.AspNetCore.Authentication.Bearer.Tests\zxm.AspNetCore.Authentication.Bearer.Tests.xproj", "{46D58ADB-BE52-4762-A717-5EB0AFD5A937}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Authentication.Hmac", "src\zxm.AspNetCore.Authentication.Hmac\zxm.AspNetCore.Authentication.Hmac.xproj", "{B484E88B-B96B-402C-979A-7605046C2E67}"
@@ -30,10 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7CF2A7CF-D353-4750-AA41-B3D9697B84C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CF2A7CF-D353-4750-AA41-B3D9697B84C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CF2A7CF-D353-4750-AA41-B3D9697B84C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CF2A7CF-D353-4750-AA41-B3D9697B84C5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46D58ADB-BE52-4762-A717-5EB0AFD5A937}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46D58ADB-BE52-4762-A717-5EB0AFD5A937}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46D58ADB-BE52-4762-A717-5EB0AFD5A937}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,7 +49,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7CF2A7CF-D353-4750-AA41-B3D9697B84C5} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
 		{46D58ADB-BE52-4762-A717-5EB0AFD5A937} = {5DAE0E4A-8070-4375-93A1-CFF100F5AE08}
 		{B484E88B-B96B-402C-979A-7605046C2E67} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
 		{0C2A0E52-7081-4198-803F-2708593FB0F0} = {A953940C-9601-4BCB-9ABF-6EF3FD5DC74D}

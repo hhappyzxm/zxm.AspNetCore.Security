@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0",
 
   "dependencies": {
@@ -13,9 +13,6 @@
       }
     },
     "net451": {
-      "dependencies": {
-        
-      }
     }
   }
 }

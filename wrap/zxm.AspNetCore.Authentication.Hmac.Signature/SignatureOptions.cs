@@ -10,7 +10,7 @@ namespace zxm.AspNetCore.Authentication.Hmac.Signature
 
         public int Timestamp { get; set; }
 
-        public string LoggedUserToken { get; set; }
+        public string UserAccessToken { get; set; }
 
         public string PostData { get; set; }
 

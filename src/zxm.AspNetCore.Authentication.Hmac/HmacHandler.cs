@@ -5,10 +5,13 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using zxm.AspNetCore.Authentication.Hmac.Signature;
+using zxm.AspNetCore.WebApi.Result.Abstractions;
 
 namespace zxm.AspNetCore.Authentication.Hmac
 {
@@ -16,6 +19,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
     {
         private readonly SignatureOptions _signatureOptions;
         private string _signatureInRequest;
+        private ErrorCode _errorCode;
 
         public HmacHandler()
         {
@@ -26,6 +30,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
         {
             if (!VerifyHttpMethod())
             {
+                _errorCode = ErrorCode.InvalidHttpMethod;
                 return AuthenticateResult.Fail("Invalid http method.");
             }
 
@@ -37,16 +42,26 @@ namespace zxm.AspNetCore.Authentication.Hmac
             var signature = SignatureFactory.GenerateSignature(_signatureOptions);
             if (!_signatureInRequest.Equals(signature, StringComparison.OrdinalIgnoreCase))
             {
+                _errorCode = ErrorCode.InvalidSignature;
                 return AuthenticateResult.Fail("Invalid signature.");
             }
 
             var identityUser = new GenericIdentity(_signatureOptions.ClientId);
 
-            if (!string.IsNullOrEmpty(_signatureOptions.LoggedUserToken) && Options.VerifyLoggedUserToken != null)
+            if (!string.IsNullOrEmpty(_signatureOptions.UserAccessToken) && Options.VerifyUserAccessToken != null)
             {
-                if (Options.VerifyLoggedUserToken(_signatureOptions.LoggedUserToken))
+                var result = Options.VerifyUserAccessToken(_signatureOptions.UserAccessToken);
+                if (result == VerifyUserAccessTokenState.Successed)
                 {
-                    identityUser.AddClaim(new Claim(ClaimTypes.UserData, _signatureOptions.LoggedUserToken));
+                    identityUser.AddClaim(new Claim(ClaimTypes.UserData, _signatureOptions.UserAccessToken));
+                }
+                else if (result == VerifyUserAccessTokenState.Failed)
+                {
+                    _errorCode = ErrorCode.InvalidUserAccessToken;
+                }
+                else if (result == VerifyUserAccessTokenState.Expired)
+                {
+                    _errorCode = ErrorCode.UserAccessTokenExpired;
                 }
             }
 
@@ -62,20 +77,27 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
         private bool TryParseSignatureOptions()
         {
-            if (!Request.QueryString.HasValue)
+            _signatureOptions.ClientId = Request.Query[SignatureKeys.ClientId];
+            if (string.IsNullOrEmpty(_signatureOptions.ClientId))
             {
+                _errorCode = ErrorCode.MissingClientId;
                 return false;
             }
 
-            _signatureOptions.ClientId = Request.Query[SignatureKeys.ClientId];
-            if(string.IsNullOrEmpty(_signatureOptions.ClientId)) return false;
-
             _signatureOptions.ClientSecret = Options.TryGetClientSecret(_signatureOptions.ClientId);
-            if (string.IsNullOrEmpty(_signatureOptions.ClientSecret)) return false;
+            if (string.IsNullOrEmpty(_signatureOptions.ClientSecret))
+            {
+                _errorCode = ErrorCode.InvalidClientId;
+                return false;
+            }
 
             _signatureInRequest = Request.Query[SignatureKeys.Signature];
-            if (string.IsNullOrEmpty(_signatureInRequest)) return false;
-
+            if (string.IsNullOrEmpty(_signatureInRequest))
+            {
+                _errorCode = ErrorCode.MissingSignature;
+                return false;
+            }
+            
             int tmpTimestamp;
             if (int.TryParse(Request.Query[SignatureKeys.Timestamp], out tmpTimestamp))
             {
@@ -83,10 +105,11 @@ namespace zxm.AspNetCore.Authentication.Hmac
             }
             else
             {
+                _errorCode = ErrorCode.MissingTimestamp;
                 return false;
             }
 
-            _signatureOptions.LoggedUserToken = Request.Query[SignatureKeys.LoggedUserToken];
+            _signatureOptions.UserAccessToken = Request.Query[SignatureKeys.LoggedUserToken];
 
             if (Request.Body.Length > 0)
             {
@@ -100,14 +123,27 @@ namespace zxm.AspNetCore.Authentication.Hmac
             return true;
         }
 
-        protected override Task<bool> HandleForbiddenAsync(ChallengeContext context)
+        protected override async Task<bool> HandleForbiddenAsync(ChallengeContext context)
         {
-            return base.HandleForbiddenAsync(context);
+            if (string.IsNullOrEmpty(_signatureOptions.UserAccessToken))
+            {
+                _errorCode = ErrorCode.MissingUserAccessToken;
+            }
+
+            var result = new WebApiResult(_errorCode, ErrorMessageFactory.GetErrorMessage(_errorCode));
+
+            await Response.WriteAsync(JsonConvert.SerializeObject(result));
+
+            return false;
         }
 
-        protected override Task<bool> HandleUnauthorizedAsync(ChallengeContext context)
+        protected override async Task<bool> HandleUnauthorizedAsync(ChallengeContext context)
         {
-            return base.HandleUnauthorizedAsync(context);
+            var result = new WebApiResult(_errorCode, ErrorMessageFactory.GetErrorMessage(_errorCode));
+
+            await Response.WriteAsync(JsonConvert.SerializeObject(result));
+
+            return false;
         }
 
         protected override Task HandleSignOutAsync(SignOutContext context)

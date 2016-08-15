@@ -19,6 +19,6 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
         public Func<string, string> TryGetClientSecret { get; set; }
         
-        public Func<string, bool> VerifyLoggedUserToken { get; set; }
+        public Func<string, VerifyUserAccessTokenState> VerifyUserAccessToken { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "authors": [ "zxm" ],
-  "description": "zxm.AspNetCore.Authentication.Bearer is an extensions to authentication with bearer.",
-  "title": "zxm.AspNetCore.Authentication.Bearer",
+  "description": "zxm.AspNetCore.Authentication.Hmac is an extensions to authentication with HMAC.",
+  "title": "zxm.AspNetCore.Authentication.Hmac",
   "copyright": "2016 ? zxm",
   "packOptions": {
     "owners": [ "zxm" ],
@@ -12,12 +12,14 @@
       "type": "git",
       "url": "https://github.com/hhappyzxm/zxm.AspNetCore.Security"
     },
-    "tags": [ "authentication", "bearer" ]
+    "tags": [ "authentication", "HMAC" ]
   },
 
   "dependencies": {
     "Microsoft.AspNetCore.Authentication": "1.0.0",
-    "zxm.AspNetCore.Authentication.Hmac.Signature": {"target": "project"}
+    "Newtonsoft.Json": "9.0.1",
+    "zxm.AspNetCore.Authentication.Hmac.Signature": { "target": "project" },
+    "zxm.AspNetCore.WebApi.Result.Abstractions": "1.0.1"
   },
 
   "frameworks": {

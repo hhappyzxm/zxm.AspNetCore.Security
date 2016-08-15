@@ -2,9 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using zxm.AspNetCore.WebApi.Result.Abstractions;
+using zxm.AspNetCore.WebApi.ResultExtenstion;
 
 namespace zxm.AspNetCore.Authentication.Bearer.Tests.Controllers
 {
+    [ResultActionFilterAttributer]
     [Route("api/[controller]/[action]")]
     public class TestController : Controller
     {
