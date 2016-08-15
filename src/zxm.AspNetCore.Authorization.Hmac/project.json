@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0",
   "authors": [ "zxm" ],
   "description": "zxm.AspNetCore.Authorization.Hmac is an extensions to authorization with zxm.AspNetCore.Authorization.Hmac.",
@@ -16,7 +16,8 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNetCore.Authorization": "1.0.0"
+    "Microsoft.AspNetCore.Authorization": "1.0.0",
+    "zxm.AspNetCore.Authentication.Hmac.Identity": {"target": "project"}
   },
 
   "frameworks": {

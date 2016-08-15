@@ -14,6 +14,7 @@
     "zxm.AspNetCore.Authorization.Hmac": "1.0.0-*",
     "zxm.AspNetCore.WebApi.Result.Abstractions": "1.0.1",
     "zxm.AspNetCore.WebApi.ResultExtenstion": "1.0.4",
+    "zxm.AspNetCore.Authentication.Hmac.Identity": { "target": "project" },
   },
 
   "frameworks": {

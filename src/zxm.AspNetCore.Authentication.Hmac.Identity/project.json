@@ -1,0 +1,17 @@
+﻿{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "System.Security.Principal": "4.0.1"
+  },
+
+  "frameworks": {
+    "netstandard1.3": {
+      "dependencies": {
+        "System.Security.Claims": "4.0.1"
+      }
+    },
+    "net451": {
+    }
+  }
+}

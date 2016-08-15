@@ -18,7 +18,8 @@
   "dependencies": {
     "Microsoft.AspNetCore.Authentication": "1.0.0",
     "Newtonsoft.Json": "9.0.1",
-    "zxm.AspNetCore.Authentication.Hmac.Signature": {"target": "project"},
+    "zxm.AspNetCore.Authentication.Hmac.Identity": { "target": "project" },
+    "zxm.AspNetCore.Authentication.Hmac.Signature": { "target": "project" },
     "zxm.AspNetCore.WebApi.Result.Abstractions": "1.0.1"
   },
 

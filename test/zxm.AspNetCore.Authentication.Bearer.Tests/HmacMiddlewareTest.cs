@@ -30,7 +30,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 collection.AddAuthorization(options =>
                 {
                     options.AddPolicy("LoggedUser",
-                         policy => policy.Requirements.Add(new LoggedUserRequirement()));
+                         policy => policy.Requirements.Add(new UserRequirement()));
                 });
                 collection.AddMvc();
             });
@@ -43,15 +43,11 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                     {
                         if (token == "abc")
                         {
-                            return VerifyUserAccessTokenState.Successed;
-                        }
-                        else if (token == "edf")
-                        {
-                            return VerifyUserAccessTokenState.Expired;
+                            return new Hmac.Identity.HmacIdentity("123456") {UserAccessToken = "abc"};
                         }
                         else
                         {
-                            return VerifyUserAccessTokenState.Failed;
+                            return null;
                         }
                     }
                 };
@@ -119,16 +115,17 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(false, ret7.Successed);
                 Assert.Equal(ErrorCode.MissingTimestamp, ret7.ErrorCode);
 
-                signatureOptions.ClientId = "123456";
-                signatureOptions.UserAccessToken = "edf";
-                signature = BuildSignature(signatureOptions);
-                var req8 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
-                var res8 = await req8.PostAsync();
-                var ret8 = await ConvertToWebApiResult(res8);
-                Assert.Equal(200, (int)res8.StatusCode);
-                Assert.Equal(false, ret8.Successed);
-                Assert.Equal(ErrorCode.UserAccessTokenExpired, ret8.ErrorCode);
+                //signatureOptions.ClientId = "123456";
+                //signatureOptions.UserAccessToken = "edf";
+                //signature = BuildSignature(signatureOptions);
+                //var req8 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                //var res8 = await req8.PostAsync();
+                //var ret8 = await ConvertToWebApiResult(res8);
+                //Assert.Equal(200, (int)res8.StatusCode);
+                //Assert.Equal(false, ret8.Successed);
+                //Assert.Equal(ErrorCode.UserAccessTokenExpired, ret8.ErrorCode);
 
+                signatureOptions.ClientId = "123456";
                 signatureOptions.UserAccessToken = "edf111";
                 signature = BuildSignature(signatureOptions);
                 var req9 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));

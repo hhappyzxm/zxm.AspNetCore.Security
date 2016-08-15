@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using zxm.AspNetCore.Authentication.Hmac.Identity;
 using zxm.AspNetCore.Authentication.Hmac.Signature;
 using zxm.AspNetCore.WebApi.Result.Abstractions;
 
@@ -46,23 +47,18 @@ namespace zxm.AspNetCore.Authentication.Hmac
                 return AuthenticateResult.Fail("Invalid signature.");
             }
 
-            var identityUser = new GenericIdentity(_signatureOptions.ClientId);
-
+            HmacIdentity identityUser = null;
             if (!string.IsNullOrEmpty(_signatureOptions.UserAccessToken) && Options.VerifyUserAccessToken != null)
             {
-                var result = Options.VerifyUserAccessToken(_signatureOptions.UserAccessToken);
-                if (result == VerifyUserAccessTokenState.Successed)
-                {
-                    identityUser.AddClaim(new Claim(ClaimTypes.UserData, _signatureOptions.UserAccessToken));
-                }
-                else if (result == VerifyUserAccessTokenState.Failed)
+                identityUser = Options.VerifyUserAccessToken(_signatureOptions.UserAccessToken);
+                if (identityUser == null)
                 {
                     _errorCode = ErrorCode.InvalidUserAccessToken;
                 }
-                else if (result == VerifyUserAccessTokenState.Expired)
-                {
-                    _errorCode = ErrorCode.UserAccessTokenExpired;
-                }
+            }
+            if (identityUser == null)
+            {
+                identityUser = new HmacIdentity(_signatureOptions.ClientId);
             }
 
             var principal = new ClaimsPrincipal(identityUser);

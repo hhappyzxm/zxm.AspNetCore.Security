@@ -20,6 +20,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Authorizatio
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Authentication.Hmac.Signature", "src\zxm.AspNetCore.Authentication.Hmac.Signature\zxm.AspNetCore.Authentication.Hmac.Signature.xproj", "{C21C01F3-6DE3-4536-BCDF-DCD0C87CA0F6}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Authentication.Hmac.Identity", "src\zxm.AspNetCore.Authentication.Hmac.Identity\zxm.AspNetCore.Authentication.Hmac.Identity.xproj", "{909D84AA-1BC5-4F4F-9155-C7833CD4FCDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{C21C01F3-6DE3-4536-BCDF-DCD0C87CA0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C21C01F3-6DE3-4536-BCDF-DCD0C87CA0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C21C01F3-6DE3-4536-BCDF-DCD0C87CA0F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{909D84AA-1BC5-4F4F-9155-C7833CD4FCDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{909D84AA-1BC5-4F4F-9155-C7833CD4FCDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{909D84AA-1BC5-4F4F-9155-C7833CD4FCDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{909D84AA-1BC5-4F4F-9155-C7833CD4FCDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +57,6 @@ Global
 		{B484E88B-B96B-402C-979A-7605046C2E67} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
 		{B0B5E2F2-2B19-4156-B0B9-2423B5C6B1FC} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
 		{C21C01F3-6DE3-4536-BCDF-DCD0C87CA0F6} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
+		{909D84AA-1BC5-4F4F-9155-C7833CD4FCDE} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
 	EndGlobalSection
 EndGlobal
