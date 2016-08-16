@@ -113,7 +113,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
                 return false;
             }
 
-            _signatureOptions.UserAccessToken = Request.Query[SignatureKeys.LoggedUserToken];
+            _signatureOptions.UserAccessToken = Request.Query[SignatureKeys.UserAccessToken];
 
             if (Request.Body.Length > 0)
             {

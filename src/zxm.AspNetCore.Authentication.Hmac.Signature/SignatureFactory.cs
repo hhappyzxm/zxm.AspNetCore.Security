@@ -49,7 +49,7 @@ namespace zxm.AspNetCore.Authentication.Hmac.Signature
                 {SignatureKeys.ClientSecret.ToLower(), options.ClientSecret},
                 {SignatureKeys.Timestamp.ToLower(), options.Timestamp.ToString()}
             };
-            if (!string.IsNullOrEmpty(options.UserAccessToken)) dic.Add(SignatureKeys.LoggedUserToken, options.UserAccessToken);
+            if (!string.IsNullOrEmpty(options.UserAccessToken)) dic.Add(SignatureKeys.UserAccessToken, options.UserAccessToken);
             if (!string.IsNullOrEmpty(options.PostData)) dic.Add(SignatureKeys.PostData, options.PostData);
 
             return dic;

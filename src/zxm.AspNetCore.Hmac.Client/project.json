@@ -1,8 +1,8 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.0",
   "authors": [ "zxm" ],
-  "description": "zxm.AspNetCore.Authentication.Hmac is an extensions to authentication with HMAC.",
-  "title": "zxm.AspNetCore.Authentication.Hmac",
+  "description": "zxm.AspNetCore.Hmac.Client is an extensions to help to request api.",
+  "title": "zxm.AspNetCore.Hmac.Client",
   "copyright": "2016 ? zxm",
   "packOptions": {
     "owners": [ "zxm" ],
@@ -16,9 +16,7 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNetCore.Authentication": "1.0.0",
     "Newtonsoft.Json": "9.0.1",
-    "zxm.AspNetCore.Authentication.Hmac.Identity": { "target": "project" },
     "zxm.AspNetCore.Authentication.Hmac.Signature": { "target": "project" },
     "zxm.AspNetCore.WebApi.Result.Abstractions": "1.0.2"
   },
@@ -26,12 +24,16 @@
   "frameworks": {
     "netstandard1.3": {
       "dependencies": {
-        "System.Collections.Specialized": "4.0.1"
+        "System.Net.Http": "4.1.0"
       },
       "buildOptions": {
         "define": [ "COREFX" ]
       }
     },
-    "net451": {}
+    "net451": {
+      "dependencies": {
+        "Microsoft.Net.Http": "2.2.22"
+      }
+    }
   }
 }
