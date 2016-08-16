@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "authors": [ "zxm" ],
   "description": "zxm.AspNetCore.Authentication.Hmac is an extensions to authentication with HMAC.",
   "title": "zxm.AspNetCore.Authentication.Hmac",

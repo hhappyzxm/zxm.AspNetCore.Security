@@ -115,13 +115,9 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
             _signatureOptions.UserAccessToken = Request.Query[SignatureKeys.UserAccessToken];
 
-            if (Request.Body.Length > 0)
+            using (var streamReader = new StreamReader(Request.Body))
             {
-                Request.Body.Position = 0;
-                using (var streamReader = new StreamReader(Request.Body))
-                {
-                    _signatureOptions.PostData = streamReader.ReadToEnd();
-                }
+                _signatureOptions.PostData = streamReader.ReadToEnd();
             }
 
             return true;

@@ -63,10 +63,6 @@
       <HintPath>..\packages\zxm.AspNetCore.Authentication.Hmac.Signature.1.0.2\lib\net451\zxm.AspNetCore.Authentication.Hmac.Signature.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="zxm.AspNetCore.Hmac.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\zxm.AspNetCore.Hmac.Client.1.0.0\lib\net451\zxm.AspNetCore.Hmac.Client.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="zxm.AspNetCore.WebApi.Result.Abstractions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\zxm.AspNetCore.WebApi.Result.Abstractions.1.0.2\lib\net451\zxm.AspNetCore.WebApi.Result.Abstractions.dll</HintPath>
       <Private>True</Private>
@@ -79,6 +75,7 @@
     <Compile Include="F_Main.Designer.cs">
       <DependentUpon>F_Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="HmacClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="F_Main.resx">
@@ -107,6 +104,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\zxm.AspNetCore.Hmac.Client\zxm.AspNetCore.Hmac.Client.xproj">
+      <Project>{57c0f520-bbbd-40fa-a91f-f75b3051ca21}</Project>
+      <Name>zxm.AspNetCore.Hmac.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

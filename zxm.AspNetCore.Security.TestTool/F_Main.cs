@@ -22,7 +22,7 @@ namespace zxm.AspNetCore.Security.TestTool
         private async void btnRequest_Click(object sender, EventArgs e)
         {
             var result = await
-                HmacClient.PostAsync(txtUri.Text, txtClientId.Text, txtClientSecret.Text, null, txtRequestBody.Text);
+                HmacClient11.PostAsync(txtUri.Text, txtClientId.Text, txtClientSecret.Text, null, txtRequestBody.Text);
 
             txtResponse.Text = JsonConvert.SerializeObject(result);
         }

@@ -9,7 +9,7 @@ using zxm.AspNetCore.WebApi.Result.Abstractions;
 
 namespace zxm.AspNetCore.Hmac.Client
 {
-    public static class HmacClient
+    public static class HmacClient11
     {
         public static Task<IWebApiResult> PostAsync(string uri, string clientId, string clientSecret, string userAccessToken = null, object postData = null)
         {
@@ -45,6 +45,7 @@ namespace zxm.AspNetCore.Hmac.Client
                 ClientSecret = clientSecret,
                 Timestamp = GetCurrentTimestamp(DateTime.Now),
                 UserAccessToken = userAccessToken,
+                PostData = postData
             };
 
             uri += $"?{BuildQueryString(options)}";
@@ -57,9 +58,11 @@ namespace zxm.AspNetCore.Hmac.Client
                     httpContent = new StringContent(options.PostData, Encoding.UTF8);
                 }
 
+            //    var a = await httpClient.GetStringAsync(uri);
+
                 var response = await httpClient.PostAsync(uri, httpContent);
                 var result = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<IWebApiResult>(result);
+                return JsonConvert.DeserializeObject<WebApiResult>(result);
             }
         }
 
@@ -87,7 +90,7 @@ namespace zxm.AspNetCore.Hmac.Client
             startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
 #endif
 
-            return (time - startTime).TotalSeconds.ToString();
+            return ((int)(time - startTime).TotalSeconds).ToString();
         }
     }
 }
