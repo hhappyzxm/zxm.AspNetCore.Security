@@ -1,5 +1,19 @@
 ﻿{
-  "version": "1.0.0-*",
+  "version": "1.0.0",
+  "authors": [ "zxm" ],
+  "description": "zxm.AspNetCore.Authentication.Hmac.Identity is an extensions to authorization with zxm.AspNetCore.Authorization.Hmac.",
+  "title": "zxm.AspNetCore.Authentication.Hmac.Identity",
+  "copyright": "2016 © zxm",
+  "packOptions": {
+    "owners": [ "zxm" ],
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0",
+    "projectUrl": "https://github.com/hhappyzxm/zxm.AspNetCore.Security",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/hhappyzxm/zxm.AspNetCore.Security"
+    },
+    "tags": [ "authentication", "identity", "HMAC" ]
+  },
 
   "dependencies": {
     "System.Security.Principal": "4.0.1"

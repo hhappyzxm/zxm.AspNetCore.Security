@@ -12,11 +12,8 @@ namespace zxm.AspNetCore.Authentication.Hmac
             AutomaticAuthenticate = true;
             AutomaticChallenge = true;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public int RequestTimeInterval { get; set; } = 10;
+        
+        public int RequestTimeInterval { get; set; } = 30;
 
         public Func<string, string> TryGetClientSecret { get; set; }
         

@@ -16,8 +16,9 @@ using zxm.AspNetCore.Authentication.Hmac;
 using zxm.AspNetCore.Authorization.Hmac;
 using zxm.AspNetCore.Authentication.Hmac.Signature;
 using zxm.AspNetCore.WebApi.Result.Abstractions;
+using zxm.AspNetCore.Authentication.Hmac.Identity;
 
-namespace zxm.AspNetCore.Authentication.Bearer.Tests
+namespace zxm.AspNetCore.Security.Tests
 {
     public class HmacMiddlewareTest
     {
@@ -43,7 +44,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                     {
                         if (token == "abc")
                         {
-                            return new Hmac.Identity.HmacIdentity("123456") {UserAccessToken = "abc"};
+                            return new HmacIdentity("123456") {UserAccessToken = "abc"};
                         }
                         else
                         {
@@ -61,7 +62,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 {
                     ClientId = "123456",
                     ClientSecret = "456789",
-                    Timestamp = 10
+                    Timestamp = GetCurrentTimestamp()
                 };
                 var signature = BuildSignature(signatureOptions);
                 var req1 = testServer.CreateRequest("/api/test/test1"+ BuildSignatureQueryString(signatureOptions, signature));
@@ -69,7 +70,9 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 var ret1 = await ConvertToWebApiResult(res1);
                 Assert.Equal(200, (int)res1.StatusCode);
                 Assert.Equal(true, ret1.Successed);
-                
+
+                signatureOptions.Timestamp = GetCurrentTimestamp();
+                signature = BuildSignature(signatureOptions);
                 var req2 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
                 var res2 = await req2.PostAsync();
                 var ret2 = await ConvertToWebApiResult(res2);
@@ -77,6 +80,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(false, ret2.Successed);
                 Assert.Equal(ErrorCode.MissingUserAccessToken, ret2.ErrorCode);
 
+                signatureOptions.Timestamp = GetCurrentTimestamp();
                 signatureOptions.UserAccessToken = "abc";
                 signature = BuildSignature(signatureOptions);
                 var req3 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
@@ -85,6 +89,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(200, (int)res3.StatusCode);
                 Assert.Equal(true, ret3.Successed);
 
+                signatureOptions.Timestamp = GetCurrentTimestamp();
                 signatureOptions.ClientId = "123123";
                 signature = BuildSignature(signatureOptions);
                 var req4 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
@@ -93,7 +98,8 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(200, (int)res4.StatusCode);
                 Assert.Equal(false, ret4.Successed);
                 Assert.Equal(ErrorCode.InvalidClientId, ret4.ErrorCode);
-                
+
+                signatureOptions.Timestamp = GetCurrentTimestamp();
                 var req5 = testServer.CreateRequest("/api/test/test2");
                 var res5 = await req5.PostAsync();
                 var ret5 = await ConvertToWebApiResult(res5);
@@ -101,6 +107,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(false, ret5.Successed);
                 Assert.Equal(ErrorCode.MissingClientId, ret5.ErrorCode);
 
+                signatureOptions.Timestamp = GetCurrentTimestamp();
                 var req6 = testServer.CreateRequest("/api/test/test2?clientid=123456");
                 var res6 = await req6.PostAsync();
                 var ret6 = await ConvertToWebApiResult(res6);
@@ -108,6 +115,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(false, ret6.Successed);
                 Assert.Equal(ErrorCode.MissingSignature, ret6.ErrorCode);
 
+                signatureOptions.Timestamp = GetCurrentTimestamp();
                 var req7 = testServer.CreateRequest("/api/test/test2?clientid=123456&signature=asfasdfasd");
                 var res7 = await req7.PostAsync();
                 var ret7 = await ConvertToWebApiResult(res7);
@@ -125,6 +133,7 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 //Assert.Equal(false, ret8.Successed);
                 //Assert.Equal(ErrorCode.UserAccessTokenExpired, ret8.ErrorCode);
 
+                signatureOptions.Timestamp = GetCurrentTimestamp();
                 signatureOptions.ClientId = "123456";
                 signatureOptions.UserAccessToken = "edf111";
                 signature = BuildSignature(signatureOptions);
@@ -134,6 +143,30 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
                 Assert.Equal(200, (int)res9.StatusCode);
                 Assert.Equal(false, ret9.Successed);
                 Assert.Equal(ErrorCode.InvalidUserAccessToken, ret9.ErrorCode);
+
+                signatureOptions.Timestamp = GetCurrentTimestamp();
+                var req10 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                var res10 = await req10.PostAsync();
+                var ret10 = await ConvertToWebApiResult(res10);
+                Assert.Equal(200, (int)res10.StatusCode);
+                Assert.Equal(false, ret10.Successed);
+                Assert.Equal(ErrorCode.InvalidSignature, ret10.ErrorCode);
+
+                signatureOptions.Timestamp = "1000";
+                var req11 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                var res11 = await req11.PostAsync();
+                var ret11 = await ConvertToWebApiResult(res11);
+                Assert.Equal(200, (int)res11.StatusCode);
+                Assert.Equal(false, ret11.Successed);
+                Assert.Equal(ErrorCode.TimestampExpired, ret11.ErrorCode);
+
+                signatureOptions.Timestamp = "asdfasdf";
+                var req13 = testServer.CreateRequest("/api/test/test2" + BuildSignatureQueryString(signatureOptions, signature));
+                var res13 = await req13.PostAsync();
+                var ret13 = await ConvertToWebApiResult(res13);
+                Assert.Equal(200, (int)res13.StatusCode);
+                Assert.Equal(false, ret13.Successed);
+                Assert.Equal(ErrorCode.InvalidTimestamp, ret13.ErrorCode);
             }
         }
 
@@ -161,6 +194,15 @@ namespace zxm.AspNetCore.Authentication.Bearer.Tests
             var content = await res.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<WebApiResult>(content);
+        }
+
+        private string GetCurrentTimestamp()
+        {
+            DateTime dtStart = new DateTime(1970, 1, 1);
+            DateTime dtNow = DateTime.Parse(DateTime.Now.ToString());
+            TimeSpan toNow = dtNow.Subtract(dtStart);
+            string timeStamp = toNow.Ticks.ToString();
+            return timeStamp.Substring(0, timeStamp.Length - 7);
         }
     }
 }

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Http.Features.Authentication;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using zxm.AspNetCore.Authentication.Hmac.Identity;
 using zxm.AspNetCore.Authentication.Hmac.Signature;
@@ -38,6 +35,21 @@ namespace zxm.AspNetCore.Authentication.Hmac
             if (!TryParseSignatureOptions())
             {
                 return AuthenticateResult.Fail("Invalid signature formate.");
+            }
+
+            var requestDateTime = GetTime(_signatureOptions.Timestamp);
+            if (requestDateTime == null)
+            {
+                _errorCode = ErrorCode.InvalidTimestamp;
+                return AuthenticateResult.Fail("Invalid timestamp.");
+            }
+            else
+            {
+                if ((DateTime.Now - requestDateTime).Value.TotalSeconds > Options.RequestTimeInterval)
+                {
+                    _errorCode = ErrorCode.TimestampExpired;
+                    return AuthenticateResult.Fail("request timestamp expired.");
+                }
             }
 
             var signature = SignatureFactory.GenerateSignature(_signatureOptions);
@@ -93,13 +105,9 @@ namespace zxm.AspNetCore.Authentication.Hmac
                 _errorCode = ErrorCode.MissingSignature;
                 return false;
             }
-            
-            int tmpTimestamp;
-            if (int.TryParse(Request.Query[SignatureKeys.Timestamp], out tmpTimestamp))
-            {
-                _signatureOptions.Timestamp = tmpTimestamp;
-            }
-            else
+
+            _signatureOptions.Timestamp = Request.Query[SignatureKeys.Timestamp];
+            if (string.IsNullOrEmpty(_signatureOptions.Timestamp))
             {
                 _errorCode = ErrorCode.MissingTimestamp;
                 return false;
@@ -119,6 +127,26 @@ namespace zxm.AspNetCore.Authentication.Hmac
             return true;
         }
 
+        private DateTime? GetTime(string timeStamp)
+        {
+            DateTime dtStart;
+#if COREFX
+            dtStart = new DateTime(1970, 1, 1);
+#else
+            dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970,1,1)); 
+#endif
+            long lTime;
+            if (long.TryParse(timeStamp + "0000000", out lTime))
+            {
+                var toNow = new TimeSpan(lTime);
+                return dtStart.Add(toNow);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         protected override async Task<bool> HandleForbiddenAsync(ChallengeContext context)
         {
             if (string.IsNullOrEmpty(_signatureOptions.UserAccessToken))
@@ -126,7 +154,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
                 _errorCode = ErrorCode.MissingUserAccessToken;
             }
 
-            var result = new WebApiResult(_errorCode, ErrorMessageFactory.GetErrorMessage(_errorCode));
+            var result = new WebApiResult(_errorCode, ErrorMessageDefaults.GetMessage(_errorCode));
 
             await Response.WriteAsync(JsonConvert.SerializeObject(result));
 
@@ -135,7 +163,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
         protected override async Task<bool> HandleUnauthorizedAsync(ChallengeContext context)
         {
-            var result = new WebApiResult(_errorCode, ErrorMessageFactory.GetErrorMessage(_errorCode));
+            var result = new WebApiResult(_errorCode, ErrorMessageDefaults.GetMessage(_errorCode));
 
             await Response.WriteAsync(JsonConvert.SerializeObject(result));
 

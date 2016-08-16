@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using zxm.AspNetCore.WebApi.Result.Abstractions;
 using zxm.AspNetCore.WebApi.ResultExtenstion;
 
-namespace zxm.AspNetCore.Authentication.Bearer.Tests.Controllers
+namespace zxm.AspNetCore.Security.Tests.Controllers
 {
     [ResultActionFilterAttributer]
     [Route("api/[controller]/[action]")]

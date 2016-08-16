@@ -8,7 +8,7 @@ namespace zxm.AspNetCore.Authentication.Hmac.Signature
 
         public string ClientSecret { get; set; }
 
-        public int Timestamp { get; set; }
+        public string Timestamp { get; set; }
 
         public string UserAccessToken { get; set; }
 

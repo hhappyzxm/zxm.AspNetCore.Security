@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": [ "zxm" ],
   "description": "zxm.AspNetCore.Authentication.Hmac.Signature is an extensions to generate signature for zxm.AspNetCore.Authentication.Hmac.",
   "title": "zxm.AspNetCore.Authentication.Hmac.Signature",
