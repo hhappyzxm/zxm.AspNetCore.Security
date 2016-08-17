@@ -32,7 +32,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
                 return AuthenticateResult.Fail("Invalid http method.");
             }
 
-            if (!TryParseSignatureOptions())
+            if (!await TryParseSignatureOptions())
             {
                 return AuthenticateResult.Fail("Invalid signature formate.");
             }
@@ -83,7 +83,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
             return Request.Method.Equals("Post", StringComparison.OrdinalIgnoreCase);
         }
 
-        private bool TryParseSignatureOptions()
+        private async Task<bool> TryParseSignatureOptions()
         {
             _signatureOptions.ClientId = Request.Query[SignatureKeys.ClientId];
             if (string.IsNullOrEmpty(_signatureOptions.ClientId))
@@ -115,10 +115,9 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
             _signatureOptions.UserAccessToken = Request.Query[SignatureKeys.UserAccessToken];
 
-            using (var streamReader = new StreamReader(Request.Body))
-            {
-                _signatureOptions.PostData = streamReader.ReadToEnd();
-            }
+            var streamReader = new StreamReader(Request.Body);
+            _signatureOptions.PostData = await streamReader.ReadToEndAsync();
+            Request.Body.Position = 0;
 
             return true;
         }
@@ -154,7 +153,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
             await Response.WriteAsync(JsonConvert.SerializeObject(result));
 
-            return false;
+            return true;
         }
 
         protected override async Task<bool> HandleUnauthorizedAsync(ChallengeContext context)
@@ -163,7 +162,7 @@ namespace zxm.AspNetCore.Authentication.Hmac
 
             await Response.WriteAsync(JsonConvert.SerializeObject(result));
 
-            return false;
+            return true;
         }
 
         protected override Task HandleSignOutAsync(SignOutContext context)

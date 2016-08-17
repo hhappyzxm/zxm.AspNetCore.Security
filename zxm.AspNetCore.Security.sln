@@ -28,6 +28,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zxm.AspNetCore.Security.Tes
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Hmac.Client", "src\zxm.AspNetCore.Hmac.Client\zxm.AspNetCore.Hmac.Client.xproj", "{57C0F520-BBBD-40FA-A91F-F75B3051CA21}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{70FFADFD-134D-4B1D-AB2D-4E7C08E72CDC}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.AspNetCore.Hmac.Sample", "sample\zxm.AspNetCore.Hmac.Sample\zxm.AspNetCore.Hmac.Sample.xproj", "{5F97104B-9F23-4FAF-A46C-686C930FE18E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,10 @@ Global
 		{57C0F520-BBBD-40FA-A91F-F75B3051CA21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57C0F520-BBBD-40FA-A91F-F75B3051CA21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57C0F520-BBBD-40FA-A91F-F75B3051CA21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F97104B-9F23-4FAF-A46C-686C930FE18E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F97104B-9F23-4FAF-A46C-686C930FE18E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F97104B-9F23-4FAF-A46C-686C930FE18E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F97104B-9F23-4FAF-A46C-686C930FE18E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +82,6 @@ Global
 		{3539BDC7-7684-4C44-A8A5-EA5EF016766F} = {5DAE0E4A-8070-4375-93A1-CFF100F5AE08}
 		{13F40D97-9306-4E6A-B433-E8226C00366A} = {134F9C88-69A0-4816-926F-95833A78424A}
 		{57C0F520-BBBD-40FA-A91F-F75B3051CA21} = {9383E626-EAD6-4BDA-B367-A1392B71C9B7}
+		{5F97104B-9F23-4FAF-A46C-686C930FE18E} = {70FFADFD-134D-4B1D-AB2D-4E7C08E72CDC}
 	EndGlobalSection
 EndGlobal

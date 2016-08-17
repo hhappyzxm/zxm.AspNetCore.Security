@@ -1,5 +1,5 @@
 {
-  "version": "1.0.4",
+  "version": "1.0.5",
   "authors": [ "zxm" ],
   "description": "zxm.AspNetCore.Authentication.Hmac is an extensions to authentication with HMAC.",
   "title": "zxm.AspNetCore.Authentication.Hmac",
@@ -20,6 +20,7 @@
     "Newtonsoft.Json": "9.0.1",
     "zxm.AspNetCore.Authentication.Hmac.Identity": { "target": "project" },
     "zxm.AspNetCore.Authentication.Hmac.Signature": { "target": "project" },
+    "zxm.AspNetCore.RequestBodyRewind": "1.0.0",
     "zxm.AspNetCore.WebApi.Result.Abstractions": "1.0.2"
   },
 

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http.Internal;
+using zxm.AspNetCore.RequestBodyRewind;
 
 namespace zxm.AspNetCore.Authentication.Hmac
 {
@@ -17,6 +20,8 @@ namespace zxm.AspNetCore.Authentication.Hmac
             {
                 throw new ArgumentNullException(nameof(options));
             }
+
+            app.UseRequestBodyRewind();
 
             return app.UseMiddleware<HmacMiddleware>(Options.Create(options));
         }

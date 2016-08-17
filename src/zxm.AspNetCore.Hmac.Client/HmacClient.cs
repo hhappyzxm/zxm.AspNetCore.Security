@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
-using System.Text;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using zxm.AspNetCore.Authentication.Hmac.Signature;
@@ -11,18 +11,15 @@ namespace zxm.AspNetCore.Hmac.Client
 {
     public static class HmacClient
     {
-        public static Task<IWebApiResult> PostAsync(string uri, string clientId, string clientSecret, string userAccessToken = null, object postData = null)
+        public static Task<HmacResponseMessage> PostAsync(string uri, string clientId, string clientSecret,
+            string userAccessToken = null, object postData = null)
         {
-            var jsonData = string.Empty;
-            if (postData != null)
-            {
-                jsonData = JsonConvert.SerializeObject(postData);
-            }
+            var jsonData = JsonConvert.SerializeObject(postData);
 
             return PostAsync(uri, clientId, clientSecret, userAccessToken, jsonData);
         }
 
-        public static async Task<IWebApiResult> PostAsync(string uri, string clientId, string clientSecret, string userAccessToken = null, string postData = null)
+        public static async Task<HmacResponseMessage> PostAsync(string uri, string clientId, string clientSecret, string userAccessToken, string postData)
         {
             if (string.IsNullOrEmpty(uri))
             {
@@ -45,21 +42,32 @@ namespace zxm.AspNetCore.Hmac.Client
                 ClientSecret = clientSecret,
                 Timestamp = GetCurrentTimestamp(DateTime.Now),
                 UserAccessToken = userAccessToken,
+                PostData = postData
             };
 
             uri += $"?{BuildQueryString(options)}";
 
             using (var httpClient = new HttpClient())
             {
-                HttpContent httpContent = null;
-                if (!string.IsNullOrEmpty(postData))
+                HttpContent httpContent = new StringContent(options.PostData);
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response =  await httpClient.PostAsync(uri, httpContent);
+                IWebApiResult result = null;
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    httpContent = new StringContent(options.PostData, Encoding.UTF8);
+                    var content = await response.Content.ReadAsStringAsync();
+                    if (content != null)
+                    {
+                        result = JsonConvert.DeserializeObject<WebApiResult>(content);
+                    }
                 }
 
-                var response = await httpClient.PostAsync(uri, httpContent);
-                var result = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<IWebApiResult>(result);
+                return new HmacResponseMessage
+                {
+                    ResponseMessage = response,
+                    Result = result
+                };
             }
         }
 
@@ -87,7 +95,7 @@ namespace zxm.AspNetCore.Hmac.Client
             startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
 #endif
 
-            return (time - startTime).TotalSeconds.ToString();
+            return ((int)(time - startTime).TotalSeconds).ToString();
         }
     }
 }
